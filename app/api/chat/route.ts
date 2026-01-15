@@ -14,9 +14,19 @@ export async function POST(request: NextRequest) {
 
     const result = await runWorkflow({ input_as_text: message });
 
+    // Check if this is a guardrail failure (has 'jailbreak' property)
+    if ('jailbreak' in result) {
+      return NextResponse.json({
+        success: false,
+        error: 'Input blocked by safety guardrails',
+        details: result
+      }, { status: 400 });
+    }
+
+    // Success case - return the parsed output
     return NextResponse.json({
       success: true,
-      result: result.output_parsed || result
+      result: (result as any).output_parsed || result
     });
   } catch (error) {
     console.error('Error processing chat:', error);
