@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      result: result.output_text
+      result: result.output_parsed || result
     });
   } catch (error) {
     console.error('Error processing chat:', error);
